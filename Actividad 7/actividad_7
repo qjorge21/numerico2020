@@ -1,0 +1,260 @@
+% PROGRAMA 1
+
+function D = diferenciasDivididasJQ(X, f)
+    % input: X vector de valores x0,x1,...,xn a interpolar
+    %        f funcion a evaluar en los puntos
+    % output: D matriz diagonal superior resultado del proceso
+    %         interpolador de Newton
+    % Calcula la matriz de diferencias divididas del proceso de Newton
+    
+    % N numero de filas, M columnas (se supone que es 1)
+    [N, M] = size(X);
+    % inicializo matriz D
+    D = zeros(N);
+    
+    %lleno columna 1 de D con los valores de f evaluados en X
+    for i = 1:N
+        D(i,1) = vpa(f(X(i)));
+        %D(i,1) = f(i);
+    end
+        
+    % contador que me es util en la iteracion
+    k = 1;
+    % lleno el resto de columnas de D
+    for i = 2:N
+        for j = 1:N-k
+            D(j,i) = (D(j+1,i-1) - D(j,i-1)) / (X(j+k)-X(j));
+        end
+        k = k + 1;
+    end
+end
+
+% PROGRAMA 2
+
+function [r] = polinomioInterpoladorNewtonJQ(f, X, a)
+    % input: f es la funcion a interpolar con newton
+    %        X vector de coeficientes de la particion
+    %        x0 punto a evaluar el polinomio de Newton
+    % output: r es el vector resultante de evaluar el polinomio de Newton P
+    % en cada punto de a
+    %         P es la expresion del polinomio interpolador de newton
+    
+    % Obtengo matriz de diferencias divididas de newton
+    D = diferenciasDivididasJQ(X,f);
+    
+    % defino A como el vector con los coeficientes obtenidos de la matriz D
+    % (primera fila)
+    display('Los coeficientes de newton obtenidos son:')
+    A = D(1,:)
+    
+    % Calculo N como el tamaño del vector X
+    [N,M] = size(X);
+    
+    % Calculo tamR como el tamaño del vector a
+    [tamR, colR] = size(a);
+    
+    
+    for k = 1:tamR
+        sumatoria = A(1);
+    
+        for i = 2:N
+           producto = A(i);
+           
+           for j = 1:i-1
+              producto = producto * (a(k) - X(j)); 
+           end
+           sumatoria = sumatoria + producto;
+        end
+        
+        r(k) = sumatoria;
+    end
+    
+    r = r';
+end
+
+% PROGRAMA 3
+
+function [A] = vandermondeJQ(X,f)
+    % input: f es la funcion a interpolar con vandermonde
+    %        X vector de coeficientes de la particion
+    % output: A es la matriz de coeficientes del polinomio de vandermonde
+    
+    % obtengo N
+    [N,M] = size(X);
+    
+    % inicializo matriz V
+    V = zeros(N);
+    
+    % uso a "i" como indice para llenar matriz V
+    for i = 1:N
+        V(:,i) = X.^(i-1);
+    end
+    
+    
+    % defino vector columna resultante de evaluar f(x) sobre el vector X
+    F = double(f(X));
+    
+    % Resuelvo sistema para obtener coefecicientes de A de vandermonde
+    A = V \ F;
+
+    A = A';
+end
+
+% Defino 10 puntos entre 0 y pi/2
+X = linspace(0,pi/2,10)
+
+X =
+
+  Columns 1 through 6
+
+                   0   0.174532925199433   0.349065850398866   0.523598775598299   0.698131700797732   0.872664625997165
+
+  Columns 7 through 10
+
+   1.047197551196598   1.221730476396031   1.396263401595464   1.570796326794897
+
+% Defino 5 puntos aleatorios
+a = rand(5,1)*(pi/2)
+
+a =
+
+   0.247578049753917
+   1.524603576403216
+   1.503514326429500
+   0.762426286129529
+   1.257077620936225
+
+X = X';
+% Defino f(x) = sin(x)
+syms x
+f(x) = sin(x)
+ 
+f(x) =
+ 
+sin(x)
+ 
+% Calculo r como el vector cuyas componentes son el resultado de evaluar el polinomio de newton en cada componente del vector "a"
+r = polinomioInterpoladorNewtonJQ(f, X, a)
+Los coeficientes de newton obtenidos son:
+
+A =
+
+  Columns 1 through 6
+
+                   0   0.994930770045299  -0.086603911422505  -0.160375652715518   0.014178653475750   0.007504774502776
+
+  Columns 7 through 10
+
+  -0.000689174700726  -0.000161092172275   0.000015781056183   0.000001926458622
+
+
+r =
+
+   0.245056578285418
+   0.998933304369927
+   0.997737419721723
+   0.690678075147485
+   0.951192564379506
+
+% Calculo el vector r1 como el vector cuyas componentes resultan de evaluar sin(x) en cada componente de "a"
+r1 = sin(a)
+
+r1 =
+
+   0.245056578254479
+   0.998933304599434
+   0.997737419940000
+   0.690678075151533
+   0.951192564366829
+
+% Calculo el error
+error = abs(r1-r)
+
+error =
+
+   1.0e-09 *
+
+   0.030939417694498
+   0.229507413074259
+   0.218277063090966
+   0.004048428259296
+   0.012677525695892a = [0.247578049753917,1.524603576403216,1.503514326429500,0.762426286129529,1.257077620936225]'
+
+
+% Calculo coeficientes con vandermonde
+coef = vandermondeJQ(X,f)
+
+coef =
+
+  Columns 1 through 6
+
+                   0   0.999999990273195   0.000000156588088  -0.166667681136100   0.000003533838006   0.008325962086562
+
+  Columns 7 through 10
+
+   0.000009591833121  -0.000206171889128   0.000003676760179   0.000001926458553
+
+% Los invierto con flip
+% Esto es para que el grado sea de mayor a menor y usar polyval
+coef = fliplr(coef)
+
+coef =
+
+  Columns 1 through 6
+
+   0.000001926458553   0.000003676760179  -0.000206171889128   0.000009591833121   0.008325962086562   0.000003533838006
+
+  Columns 7 through 10
+
+  -0.166667681136100   0.000000156588088   0.999999990273195                   0
+
+% Evaluo con polival en los puntos random
+polyval(coef, a)
+
+ans =
+
+   0.245056578285418
+   0.998933304369927
+   0.997737419721723
+   0.690678075147485
+   0.951192564379506
+
+r1
+
+r1 =
+
+   0.245056578254479
+   0.998933304599434
+   0.997737419940000
+   0.690678075151533
+   0.951192564366829
+
+% Calculo error
+
+error = abs(ans-r1)
+
+error =
+
+   1.0e-09 *
+
+   0.030939528716800
+   0.229507524096562
+   0.218277285135571
+   0.004048539281598
+   0.012677525695892
+
+% r1 tiene los valores reales de sin(x) para el vector de randoms "a"
+
+% grafico en un mismo grafico, las funciones
+% y1 = sin(x) es la funcion real
+% y2 es la interpolacion denewton
+% y3 es la interpolacion de vandermonde
+y1 = sin(X);
+
+y2 = polinomioInterpoladorNewtonJQ(f, X, X);
+
+y3 = polyval(coef,X);
+
+plot(X,y1,'r',X,y2,'b',X,y3,'g')
+% No se diferencias las graficas debido a que el error es muy pequeño (9 digitos)
+diary off

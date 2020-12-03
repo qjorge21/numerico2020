@@ -1,0 +1,829 @@
+% Metodo Jacob
+
+function [x, error] = jacobEjer1JQ(A, b, x0, iter)
+    % defino D^-1 como Dinv
+    D = inv(diag(diag(A)));
+    
+    % calculo tamaño de la matriz
+    c = size(A);
+    dim1 = c(1);
+    dim2 = c(2);
+    
+    % defino matriz identidad
+    I = eye(dim1);
+    
+    % controlo que la matriz sea diag dominante
+    isDiagDom = true;
+    
+    for i = 1 : dim1
+        sum = 0;
+        for j = 1 : dim2
+            if(i ~= j)
+                sum = sum + abs(A(i,j));
+            end
+        end
+        if(A(i,i)<=sum)
+            isDiagDom = false;
+            break;
+        end
+    end
+    
+    if(isDiagDom)
+        disp('Matriz diagonalmente dominante, converge mediante metodo Jacob');
+    else
+        disp('Matriz NO diagonalmente dominante, no se asegura convergencia mediante metodo Jacob');
+    end
+    
+    % Calculo el "B" y "d" del metodo iterativo (de formula xnp = B*xn + d)
+    % Con esto reduzco tiempo de ejecucion
+    B = I - D*A;
+    d = D*b;
+    % inicializo con x0
+    x = B*x0 + d;
+
+    % empiezo iteracion
+    for i = 2:iter
+        x = B*x + d;
+    end
+    
+    error = norm(A*x - b);
+
+end
+
+% Metodo Gauss
+
+function [x, error] = gaussSeidelEjer2JQ(A, b, x0, iter)
+    c = size(A);
+    
+    tam = c(1);
+    
+    % calculo matrices L D U
+    % matriz diagonal
+    D = diag(diag(A));
+    % obtengo matriz diagonal inferior
+    L = tril(A);
+    % obtengo matriz diagonal superior 
+    U = triu(A);
+    
+    % elimino elementos de la diagonal de L y U
+    for i = 1:tam
+        L(i,i) = 0;
+        U(i,i) = 0;
+    end
+    
+    % Calculo el "B" del metodo iterativo (de formula xnp = B*xn + d)
+    B = -(inv(D + L))*U;
+    % calculo radio espectral de B
+    radioEsp = max(abs(eig(B)));
+    
+    if(radioEsp < 1)
+        disp('Radio espectral menor a uno, converge mediante metodo Gauss Seidel')
+    else
+        disp('Radio espectral mayor o igual a uno, no se asegura convergencia mediante metodo Gauss Seidel')
+    end
+    
+    % calculo "d" de la formula xnp = B*xn + d para no hacerlo en cada
+    % iteracion
+    d = inv(D + L)*b;
+    
+    % reutilizo B para reducir el tiempo de ejecucion
+    % inicializo mediante x0
+    x = B*x0 + d;
+    
+    for i= 2:iter
+        x = B*x + d;
+    end
+    
+    error = norm(A*x - b);
+end
+
+% Metodo normas frobenius
+
+function [x, error] = normaFrobeniusEjer2JQ(A, b, x0, iter)
+    c = size(A);
+    dim1 = c(1);
+    dim2 = c(2);
+    
+    % vecnorm retorna la norma euclidea de cada columna
+    % por lo tanto hago la traspuesta antes
+    N = vecnorm(transpose(A));
+    
+    % matriz identidad dim N
+    I = eye(dim1);
+    
+    % controlo que sea diagonalmente dominante
+    isDiagDom = true;
+    
+    for i = 1 : dim1
+        sum = 0;
+        for j = 1 : dim2
+            if(i ~= j)
+                sum = sum + abs(A(i,j));
+            end
+        end
+        if(A(i,i)<=sum)
+            isDiagDom = false;
+            break;
+        end
+    end
+    
+    if(isDiagDom)
+        disp('Matriz diagonalmente dominante, converge mediante metodo normas frobenius');
+    else
+        disp('Matriz NO diagonalmente dominante, no se asegura convergencia mediante metodo normas frobenius');
+    end
+    
+    % pre inicializo Mf para reducir tiempo de ejecucion
+    Mf = zeros(dim1,dim2);
+    % creacion matriz de norma de frobenius
+    for i = 1 : dim1
+        Mf(i,i) = A(i,i)/(N(i))^2;
+    end
+    
+    % Calculo el "B" y "d" del metodo iterativo (de formula xnp = B*xn + d)
+    % para reducir tiempo de ejecucion
+    B = I-Mf*A;
+    d = Mf*b;
+    
+    % inicializo mediante x0 y empiezo iteracion
+    x = B*x0 + d;
+    
+    % empiezo iteracion
+    for i = 2:iter
+        x = B*x + d;
+    end
+    
+    error = norm(A*x - b);
+end
+
+% Metodo normas infinitas
+
+function [x, error] = normaInfinitasEjer2JQ(A, b, x0, iter)
+    c = size(A);
+    dim1 = c(1);
+    dim2 = c(2);
+    
+    % matriz identidad dim N
+    I = eye(dim1);
+    
+    % controlo que sea diagonalmente dominante
+    isDiagDom = true;
+    
+    % pre inicializo suma para mejorar velocidad ejecucion 
+    suma = zeros(1,dim1);
+    
+    % ahora si almaceno el i-esimo valor de la sumatoria para cada i
+    % para luego usarlo para calcular lo g i-esimos
+    for i = 1 : dim1
+        suma(i) = 0;
+        for j = 1 : dim2
+            if(i ~= j)
+                suma(i) = suma(i) + abs(A(i,j));
+            end
+        end
+        if(A(i,i)<=suma(i))
+            isDiagDom = false;
+            break;
+        end
+    end
+    
+    if(isDiagDom)
+        disp('Matriz diagonalmente dominante, converge mediante metodo normas infinitas');
+    else
+        disp('Matriz NO diagonalmente dominante, no se asegura convergencia mediante metodo normas infinitas');
+    end
+    
+    gi = zeros(1,dim1);
+    
+    %calculos de los g i-esimos
+    for i = 1 : dim1
+        gi(i) = A(i,i) - suma(i);
+    end
+    
+    % calculo sg como el menor de los gi
+    sg = min(gi);
+    
+    % calculo norma infinita de A
+    Ninf = norm(A,'inf');
+    
+    % calculo alfa sub cero
+    alfa0 = 2 / (Ninf + sg);
+    
+    % Calculo el "B" y "d" del metodo iterativo (de formula xnp = B*xn + d)
+    % para reducir tiempo de ejecucion
+    B = I-alfa0*A;
+    d = alfa0*b;
+    
+    % inicializo mediante x0 y empiezo iteracion
+    x = B*x0 + d;
+    
+    % empiezo iteracion
+    for i = 2:iter
+        x = B*x + d;
+    end
+    
+    error = norm(A*x - b);
+   
+    
+end
+
+% Programa comparativos
+function [aprox, error] = ejer3Act4JQ(A,b,x0,iter)
+  
+  % Metodo jacob
+  [x, err] = jacobEjer1JQ(A,b,x0,iter);
+  for i=1 : size(x)
+    aprox(1,i) = x(i);
+  end
+  error(1) = err;
+  
+  % Metodo normas frobenius
+  [x, err] = normaFrobeniusEjer2JQ(A,b,x0,iter);
+  for i=1 : size(x)
+    aprox(2,i) = x(i);
+  end
+  error(2) =  err;
+  
+  % Metodo normas infinitas
+  [x, error] = normaInfinitasEjer2JQ(A,b,x0,iter);
+  for i=1 : size(x)
+    aprox(3,i) = x(i);
+  end
+  error(3) = err;
+  
+  error = error';
+  
+end
+
+
+% Sistema 1
+A = [3 -1 1; 3 6 2; 3 3 7]
+
+A =
+
+     3    -1     1
+     3     6     2
+     3     3     7
+
+b = [1 0 4]'
+
+b =
+
+     1
+     0
+     4
+
+x0 = [0 0 0]
+
+x0 =
+
+     0     0     0
+
+x0 = x0'
+
+x0 =
+
+     0
+     0
+     0
+
+iter = 30;
+
+[x, error] = jacobEjer1JQ(A, b, x0, iter)
+Matriz diagonalmente dominante, converge mediante metodo Jacob
+
+x =
+
+    0.0351
+   -0.2368
+    0.6579
+
+
+error =
+
+   3.3540e-11
+
+% sistema 1 con gauss
+
+[x, error] = gaussSeidelEjer2JQ(A, b, x0, iter)
+Radio espectral menor a uno, converge mediante metodo Gauss Seidel
+
+x =
+
+    0.0351
+   -0.2368
+    0.6579
+
+
+error =
+
+   1.1102e-16
+
+% sistema 1 con norma de frobenius
+[x, error] = normaFrobeniusEjer2JQ(A, b, x0, iter)
+Matriz diagonalmente dominante, converge mediante metodo normas frobenius
+
+x =
+
+    0.0351
+   -0.2368
+    0.6579
+
+
+error =
+
+   1.5731e-10
+
+% sistema 1 con norma infinitas
+[x, error] = normaInfinitasEjer2JQ(A, b, x0, iter)
+Matriz diagonalmente dominante, converge mediante metodo normas infinitas
+
+x =
+
+    0.0351
+   -0.2368
+    0.6579
+
+
+error =
+
+   1.3357e-08
+
+iter
+
+iter =
+
+    30
+
+% Defino sistema 2
+A = [10 -1 0; -1 10 -2; 0 -2 10]
+
+A =
+
+    10    -1     0
+    -1    10    -2
+     0    -2    10
+
+b = [9 7 6]'
+
+b =
+
+     9
+     7
+     6
+
+% Sistema 2 con Jacob
+[x, error] = jacobEjer1JQ(A, b, x0, iter)
+Matriz diagonalmente dominante, converge mediante metodo Jacob
+
+x =
+
+    0.9958
+    0.9579
+    0.7916
+
+
+error =
+
+   1.7764e-15
+
+% Sistema 2 con Gauss
+[x, error] = gaussSeidelEjer2JQ(A, b, x0, iter)
+Radio espectral menor a uno, converge mediante metodo Gauss Seidel
+
+x =
+
+    0.9958
+    0.9579
+    0.7916
+
+
+error =
+
+   1.7764e-15
+
+% Sistema 2 con normas frobenius
+[x, error] = normaFrobeniusEjer2JQ(A, b, x0, iter)
+Matriz diagonalmente dominante, converge mediante metodo normas frobenius
+
+x =
+
+    0.9958
+    0.9579
+    0.7916
+
+
+error =
+
+   1.2561e-15
+
+% Sistema 2 con normas infinitas
+[x, error] = normaInfinitasEjer2JQ(A, b, x0, iter)
+Matriz diagonalmente dominante, converge mediante metodo normas infinitas
+
+x =
+
+    0.9958
+    0.9579
+    0.7916
+
+
+error =
+
+   1.7764e-15
+
+% Defino sistema 3
+A = [4 1 1 0 1; -1 -3 1 1 0; 2 1 5 -1 -1; -1 -1 -1 4 0; 0 2 -1 1 4]
+
+A =
+
+     4     1     1     0     1
+    -1    -3     1     1     0
+     2     1     5    -1    -1
+    -1    -1    -1     4     0
+     0     2    -1     1     4
+
+b = [6 6 6 6 6]'
+
+b =
+
+     6
+     6
+     6
+     6
+     6
+
+x0 = [0 0 0 0 0]'
+
+x0 =
+
+     0
+     0
+     0
+     0
+     0
+
+% Sistema 3 con Jacob
+[x, error] = jacobEjer1JQ(A, b, x0, iter)
+Matriz NO diagonalmente dominante, no se asegura convergencia mediante metodo Jacob
+
+x =
+
+    0.7866
+   -1.0026
+    1.8663
+    1.9126
+    1.9897
+
+
+error =
+
+   6.7711e-09
+
+% Sistema 3 con Gauss
+[x, error] = gaussSeidelEjer2JQ(A, b, x0, iter)
+Radio espectral menor a uno, converge mediante metodo Gauss Seidel
+
+x =
+
+    0.7866
+   -1.0026
+    1.8663
+    1.9126
+    1.9897
+
+
+error =
+
+   2.1756e-15
+
+% Sistema 3 con normas frobenius
+[x, error] = normaFrobeniusEjer2JQ(A, b, x0, iter)
+Matriz NO diagonalmente dominante, no se asegura convergencia mediante metodo normas frobenius
+
+x =
+
+    0.7866
+   -1.0026
+    1.8663
+    1.9126
+    1.9897
+
+
+error =
+
+   1.6293e-06
+
+% Sistema 3 con normas infinitas
+[x, error] = normaInfinitasEjer2JQ(A, b, x0, iter)
+Matriz NO diagonalmente dominante, no se asegura convergencia mediante metodo normas infinitas
+
+x =
+
+   1.0e+11 *
+
+   -0.8199
+    9.6263
+   -1.6288
+    1.2684
+   -2.9175
+
+
+error =
+
+   3.0453e+12
+
+% Sistema 4
+% Defino sistema 4
+A = [10 5 0 0; 5 10 -4 0; 0 -4 8 -1; 0 0 -1 5]
+
+A =
+
+    10     5     0     0
+     5    10    -4     0
+     0    -4     8    -1
+     0     0    -1     5
+
+b = [6 25 -11 -11]'
+
+b =
+
+     6
+    25
+   -11
+   -11
+
+x0 = [0 0 0 0]'
+
+x0 =
+
+     0
+     0
+     0
+     0
+
+% Sistema 4 con Jacob
+[x, error] = jacobEjer1JQ(A, b, x0, iter)
+Matriz diagonalmente dominante, converge mediante metodo Jacob
+
+x =
+
+   -0.7976
+    2.7953
+   -0.2588
+   -2.2518
+
+
+error =
+
+   2.3080e-04
+
+% Sistema 4 con Gauss
+[x, error] = gaussSeidelEjer2JQ(A, b, x0, iter)
+Radio espectral menor a uno, converge mediante metodo Gauss Seidel
+
+x =
+
+   -0.7976
+    2.7953
+   -0.2588
+   -2.2518
+
+
+error =
+
+   3.7884e-10
+
+% Sistema 4 con normas frobenius
+[x, error] = normaFrobeniusEjer2JQ(A, b, x0, iter)
+Matriz diagonalmente dominante, converge mediante metodo normas frobenius
+
+x =
+
+   -0.7974
+    2.7949
+   -0.2591
+   -2.2518
+
+
+error =
+
+    0.0018
+
+% Sistema 5
+% Defino sistema 5
+A = [2 -1 1; 2 2 2; -1 -1 2]
+
+A =
+
+     2    -1     1
+     2     2     2
+    -1    -1     2
+
+b = [-1 4 -5]'
+
+b =
+
+    -1
+     4
+    -5
+
+x0 = [0 0 0]'
+
+x0 =
+
+     0
+     0
+     0
+
+% Sistema 5 con Jacob
+[x, error] = jacobEjer1JQ(A, b, x0, iter)
+Matriz NO diagonalmente dominante, no se asegura convergencia mediante metodo Jacob
+
+x =
+
+   18.0530
+   70.2121
+  -18.0530
+
+
+error =
+
+  188.3568
+
+% Sistema 5 con Gauss
+[x, error] = gaussSeidelEjer2JQ(A, b, x0, iter)
+Radio espectral menor a uno, converge mediante metodo Gauss Seidel
+
+x =
+
+    1.0000
+    2.0000
+   -1.0000
+
+
+error =
+
+   7.3786e-08
+
+% Sistema 5 con normas frobenius
+[x, error] = normaFrobeniusEjer2JQ(A, b, x0, iter)
+Matriz NO diagonalmente dominante, no se asegura convergencia mediante metodo normas frobenius
+
+x =
+
+    1.0000
+    2.0000
+   -1.0000
+
+
+error =
+
+   2.2651e-04
+
+% Sistema 5 con normas infinitas
+[x, error] = normaInfinitasEjer2JQ(A, b, x0, iter)
+Matriz NO diagonalmente dominante, no se asegura convergencia mediante metodo normas infinitas
+
+x =
+
+    1.0012
+    2.0055
+   -1.0015
+
+
+error =
+
+    0.0149
+
+% Ejercicio 3 comparaciones
+% para hacer las comparaciones vamos  a usar el programa 4
+% Definimos para el sistema 1
+A = [3 -1 1; 3 6 2; 3 3 7];
+b = [1 0 4]';
+x0 = [0 0 0]';
+[aprox, error] = ejer3Act4JQ(A,b,x0,iter)
+Matriz diagonalmente dominante, converge mediante metodo Jacob
+Matriz diagonalmente dominante, converge mediante metodo normas frobenius
+Matriz diagonalmente dominante, converge mediante metodo normas infinitas
+
+aprox =
+
+    0.0351   -0.2368    0.6579
+    0.0351   -0.2368    0.6579
+    0.0351   -0.2368    0.6579
+
+
+error =
+
+   1.0e-07 *
+
+    0.1336
+         0
+    0.0016
+
+% Para este caso vemos que el que mejor aproxima es Jacob y el que peor aproxima es frobenius para 30 iteraciones
+% Ahora comparamos los demas sistemas
+% Sistema 2
+A = [10 -1 0; -1 10 -2; 0 -2 10];
+b = [9 7 6]';
+[aprox, error] = ejer3Act4JQ(A,b,x0,iter)
+Matriz diagonalmente dominante, converge mediante metodo Jacob
+Matriz diagonalmente dominante, converge mediante metodo normas frobenius
+Matriz diagonalmente dominante, converge mediante metodo normas infinitas
+
+aprox =
+
+    0.9958    0.9579    0.7916
+    0.9958    0.9579    0.7916
+    0.9958    0.9579    0.7916
+
+
+error =
+
+   1.0e-14 *
+
+    0.1776
+         0
+    0.1256
+
+% Nuevamente vemos que es un poco mejor Jacob respescto a los demas
+% Ahora el sistema 3
+A = [4 1 1 0 1; -1 -3 1 1 0; 2 1 5 -1 -1; -1 -1 -1 4 0; 0 2 -1 1 4];
+b = [6 6 6 6 6]';
+x0 = [0 0 0 0 0]';
+
+[aprox, error] = ejer3Act4JQ(A,b,x0,iter)
+Matriz NO diagonalmente dominante, no se asegura convergencia mediante metodo Jacob
+Matriz NO diagonalmente dominante, no se asegura convergencia mediante metodo normas frobenius
+Matriz NO diagonalmente dominante, no se asegura convergencia mediante metodo normas infinitas
+
+aprox =
+
+   1.0e+11 *
+
+    0.0000   -0.0000    0.0000    0.0000    0.0000
+    0.0000   -0.0000    0.0000    0.0000    0.0000
+   -0.8199    9.6263   -1.6288    1.2684   -2.9175
+
+
+error =
+
+   1.0e+12 *
+
+    3.0453
+         0
+    0.0000
+
+% Para el sistema 3 vemos que aproximo mejor el de normas infinitas, mientras que los demas no convergieron
+% para el sistema 4
+A = [10 5 0 0; 5 10 -4 0; 0 -4 8 -1; 0 0 -1 5];
+b = [6 25 -11 -11]';
+x0 = [0 0 0 0]':
+
+[aprox, error] = ejer3Act4JQ(A,b,x0,iter)
+Matriz diagonalmente dominante, converge mediante metodo Jacob
+Matriz diagonalmente dominante, converge mediante metodo normas frobenius
+Matriz diagonalmente dominante, converge mediante metodo normas infinitas
+
+aprox =
+
+   -0.7976    2.7953   -0.2588   -2.2518
+   -0.7974    2.7949   -0.2591   -2.2518
+   -0.7976    2.7953   -0.2588   -2.2518
+
+
+error =
+
+    0.0001
+         0
+    0.0018
+
+% para este caso el que mejor convergio es el metodo de normas de frobenius
+% por ultimos sistema 5
+A = [2 -1 1; 2 2 2; -1 -1 2];
+b = [-1 4 -5]';
+x0 = [0 0 0]';
+[aprox, error] = ejer3Act4JQ(A,b,x0,iter)
+Matriz NO diagonalmente dominante, no se asegura convergencia mediante metodo Jacob
+Matriz NO diagonalmente dominante, no se asegura convergencia mediante metodo normas frobenius
+Matriz NO diagonalmente dominante, no se asegura convergencia mediante metodo normas infinitas
+
+aprox =
+
+   18.0530   70.2121  -18.0530
+    1.0000    2.0000   -1.0000
+    1.0012    2.0055   -1.0015
+
+
+error =
+
+    0.0149
+         0
+    0.0002
+
+% igual que para el anterior, el que mejor converge es el metodo de normas de frobenius
+% Podemos observar entonces que para los sistemas con menor cantidad de variables como el 1 y 2 donde
+% son diagonalmente dominantes el metodo de Jacob funciona mejor que los demas, mientras que para el sistema 4
+% el metodo de frobenius converge mas rapido que los demas al tener mas cant de variables. Para el caso de los sistemas
+% no diagonalmente dominantes como el 3 y 5 el meetodo de normas Frobenius y Normas infinitas convergen mucho mejor que Jacob

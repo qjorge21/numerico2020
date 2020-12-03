@@ -1,0 +1,83 @@
+>> % Problama #1: Escriba un m-file con una funcion que ejecute la siguiente acción: dado un número x (input) decida si es positivo o negativo. El output es un mensaje que debe decir “este numero es positivo” o “este numero es negativo” generado por el comando “display” según corresponda.
+
+function ejercicio1jq(x)
+  if x < 0;
+    display('Es negativo')
+  else
+    display('Es positivo')
+  endif
+endfunction
+
+>> ejercicio1jq(5)
+Es positivo
+>> ejercicio1jq(-5)
+Es negativo
+>> % Problema #2: Escriba un m-file con una funcion que ejecute la siguiente acción: Dado un vector x (input) construya un vector y (output) cuyas componentes son el cuadrado de las correspondientes componentes de x. Para probar el programa, seleccione vectores que usted desee. Use una sentencia for--loop.
+
+function y = ejercicio2jq(x)
+  n = length(x);
+  y = zeros(1,n);
+  for i = 1:n
+    y(i) = x(i)*x(i);
+  endfor
+endfunction
+
+
+>>  x = [3 4]
+x =
+
+   3   4
+>> ejercicio2jq(x)
+ans =
+
+    9   16
+>> x = [2 3 4 5 6 7]
+x =
+
+   2   3   4   5   6   7
+
+>> ejercicio2jq(x)
+ans =
+
+    4    9   16   25   36   49
+
+>> % Problema #3: Escriba un m-file con una función que dado un vector x construya un vector y (output) que tenga valor 1 en cada componente donde el vector x es positivo y valor -1 en cada componente donde el vector x tiene valor negativo. Use una sentencia for—loop combinada con una sentencia if-then-else. Para probar el programa use vectores generados por el siguiente comando en MATLAB x=randn(1 ,n) donde n es la longitud del vector que Ud. elige.
+
+function y = ejercicio3jq(x)
+  n = length(x);
+  y = zeros(1,n);
+  for i = 1:n
+    if x(i) < 0
+      y(i) = -1;
+    else
+      y(i) = 1;
+    endif
+  endfor
+endfunction
+
+>> x = randn(1,7)
+x =
+
+  -1.59454  -0.72336   0.30387   0.37230   0.25347  -0.17908   1.91751
+
+>> ejercicio3jq(x)
+ans =
+
+  -1  -1   1   1   1  -1   1
+
+>> % Problema #4 Escriba un m-file con una función que dado n, sume los números naturales menores que n+1. El input es el valor n, y el output es s, la suma de los números naturales de 1 a n. Use una sentencia ‘while’.
+
+function s = ejercicio4jq(n)
+  % defino s como sumatoria inicialmente en 0
+  s = 0;
+  % i es el indice para cada iteracion
+  i = 0;
+  while i <= n
+    s = s + i;
+    i = i + 1;
+  endwhile
+endfunction
+
+>> n = 4
+ans =  10
+>> diary off

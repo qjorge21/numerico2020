@@ -1,0 +1,345 @@
+% Programa 1
+function [x] = resolverGaussJQ(A,b)
+    % Ejercicio 1. Actividad 5
+    % output x: aproximacion
+    % input A,b: A matriz triangular superior; b vector resultante
+    % Resuelve un sistema Ax = b, con A ya triangular superior
+    c = size(A);
+    N = c(1);
+    
+    vector_soluciones = zeros(1,N);
+    
+    i = N;
+    
+    while i >= 1
+        vector_fila = A(i,:);
+
+       
+        if i == N
+            % si es ultima fila, resuelvo directamente la ecuacion
+            pivot = vector_fila(i);
+            
+            soluc = b(i)/pivot;
+            
+            vector_soluciones(i) = soluc;
+        else
+            % logica si no es ultima fila
+           
+            % guardo pivot
+            pivot = vector_fila(i);
+            
+            % reemplazo solucion anterior
+            % aca esta el error
+            for k= i+1:N
+                vector_fila(k) = vector_fila(k) .* vector_soluciones(k);
+            end
+            
+            j = i + 1;
+            
+            sumatoria = 0;
+            
+            while j <= N
+                sumatoria = sumatoria + vector_fila(j);
+                j = j + 1;
+            end
+            
+            soluc = (b(i) - sumatoria) / pivot;
+            
+            vector_soluciones(i) = soluc;
+
+        end
+        
+        i= i -1;
+    end
+            
+    x = vector_soluciones;    
+    
+end
+
+% Programa 2
+function [T,bT] = triangulizarGaussJQ(A,b)
+    % Ejercicio 2. Actividad 5
+    % output T y bT luego de triangulizar por gauss jordan
+    % input A y b del sistema
+    c = size(A);
+    N = c(1);
+    
+    for i = 1:N-1
+        fila = A(i,:);
+        pivot_fila = fila(i);
+        
+        for j = i+1:N
+            fila_actual = A(j,:);
+            pivot_fila_actual = fila_actual(i);
+            
+            multiplicador = -(pivot_fila_actual/pivot_fila);
+            
+            A(j,:) = fila_actual + (multiplicador .* fila);
+            b(j) = b(j) + (multiplicador .* b(i));
+        end
+    end
+    
+    T = A;
+    
+    bT = b;
+end
+
+% Programa 3
+
+function [x] = gaussJordanJQ(A,b)
+    % triangulizo la matriz A,b
+    [T,bT] = triangulizarGaussJQ(A,b);
+    % resuelvo el sistema
+    x = resolverGaussJQ(T,bT);
+end
+
+% Programa 4
+
+function [autovalor, autovector] = metodoPotenciaJQ(A, x0, niter)
+    % Metodo de la potencia
+    % Calcula el auto valor y auto vector dominante de la matriz A
+    % dado un x0 inicial
+    x = x0;
+    
+    for i = 1:niter
+        xT = A * x;
+        x = xT / norm(xT);
+    end
+    
+    autovalor = max(A * x);
+    
+    autovector = x;
+end
+
+% Ejecuciones Gauss-Jordan
+% Sistema 1
+
+A = [3 -1 1; 3 6 2; 3 3 7];
+b = [1 0 4]';
+x = gaussJordanJQ(A,b)
+
+x =
+
+    0.0351   -0.2368    0.6579
+
+% Sistema 2
+A = [10 -1 0; -1 10 -2; 0 -2 10];
+b = [9 7 6]';
+x = gaussJordanJQ(A,b)
+
+x =
+
+    0.9958    0.9579    0.7916
+
+% Sistema 3
+A = [4 1 1 0 1; -1 -3 1 1 0; 2 1 5 -1 -1; -1 -1 -1 4 0; 0 2 -1 1 4]
+
+A =
+
+     4     1     1     0     1
+    -1    -3     1     1     0
+     2     1     5    -1    -1
+    -1    -1    -1     4     0
+     0     2    -1     1     4
+
+b = [6 6 6 6 6]'
+
+b =
+
+     6
+     6
+     6
+     6
+     6
+
+ x = gaussJordanJQ(A,b)
+
+x =
+
+    0.7866   -1.0026    1.8663    1.9126    1.9897
+
+% Sistema 4
+A = [10 5 0 0; 5 10 -4 0; 0 -4 8 -1; 0 0 -1 5]
+
+A =
+
+    10     5     0     0
+     5    10    -4     0
+     0    -4     8    -1
+     0     0    -1     5
+
+b = [6 25 -11 -11]'
+
+b =
+
+     6
+    25
+   -11
+   -11
+
+ x = gaussJordanJQ(A,b)
+
+x =
+
+   -0.7976    2.7953   -0.2588   -2.2518
+
+% Sistema 5
+A = [2 -1 1; 2 2 2; -1 -1 2]
+
+A =
+
+     2    -1     1
+     2     2     2
+    -1    -1     2
+
+b = [-1 4 -5]'
+
+b =
+
+    -1
+     4
+    -5
+
+ x = gaussJordanJQ(A,b)
+
+x =
+
+     1     2    -1
+
+% Ejecuciones metodo de la potencia
+% Sistema 1
+[autovalor, autovector] = metodoPotenciaJQ(A, x0, 60)
+
+autovalor =
+
+    7.6013
+
+
+autovector =
+
+    0.0432
+    0.5599
+    0.8274
+
+% Sistema 2
+A = [10 -1 0; -1 10 -2; 0 -2 10]
+
+A =
+
+    10    -1     0
+    -1    10    -2
+     0    -2    10
+
+[autovalor, autovector] = metodoPotenciaJQ(A, x0, 60)
+
+autovalor =
+
+    7.7387
+
+
+autovector =
+
+    0.3162
+   -0.7071
+    0.6325
+
+% Sistema 3
+x0 = [1 1 1 1 1]'
+
+x0 =
+
+     1
+     1
+     1
+     1
+     1
+
+A = [4 1 1 0 1; -1 -3 1 1 0; 2 1 5 -1 -1; -1 -1 -1 4 0; 0 2 -1 1 4]
+
+A =
+
+     4     1     1     0     1
+    -1    -3     1     1     0
+     2     1     5    -1    -1
+    -1    -1    -1     4     0
+     0     2    -1     1     4
+
+[autovalor, autovector] = metodoPotenciaJQ(A, x0, 60)
+
+autovalor =
+
+    5.1012
+
+
+autovector =
+
+    0.1459
+    0.0268
+    0.7880
+   -0.3884
+   -0.4540
+
+% Sistema 4
+A = [10 5 0 0; 5 10 -4 0; 0 -4 8 -1; 0 0 -1 5]
+
+A =
+
+    10     5     0     0
+     5    10    -4     0
+     0    -4     8    -1
+     0     0    -1     5
+
+x0 = [1 1 1 1]'
+
+x0 =
+
+     1
+     1
+     1
+     1
+
+[autovalor, autovector] = metodoPotenciaJQ(A, x0, 60)
+
+autovalor =
+
+   11.6059
+
+
+autovector =
+
+    0.5912
+    0.7210
+   -0.3601
+    0.0325
+
+% Sistema 5
+A = [2 -1 1; 2 2 2; -1 -1 2]
+
+A =
+
+     2    -1     1
+     2     2     2
+    -1    -1     2
+
+x0 = [1 1 1]'
+
+x0 =
+
+     1
+     1
+     1
+
+[autovalor, autovector] = metodoPotenciaJQ(A, x0, 60)
+
+autovalor =
+
+    3.3474
+
+
+autovector =
+
+    0.6740
+    0.6516
+    0.3482
+
+diary off

@@ -1,0 +1,266 @@
+% Programa 1: sumas de riemann
+function resultados = sumasRiemmanJQ(f, a, b, n)
+  % Calcula el valor de una integral mediante la suma de Riemann a
+  % izquierda y derecha
+  % Input: f funcion a integrar
+  %        a,b limites de integracion
+  %        n cantidad de intervalos
+  
+  % defino h
+  h = (b-a)/n;
+  
+  % Almaceno valores de f evaluado en los x
+  fx = [];
+  for i=0:n
+    xi = a + i*h;
+    fx(i+1) = double(f(xi));
+  end  
+  
+  % Calculo suma a izquierda
+  sri = 0;
+  for i=1:n
+    sri = sri + fx(i);
+  end
+  sri = sri * h;
+  
+  % Calculo suma a derecha
+  srd = 0;
+  for i=2:n+1
+    srd = srd + fx(i);
+  end
+  srd = srd * h;
+  
+  resultados = [sri, srd];
+end
+
+% Programa 2: metodo punto medio
+function resultado = puntoMedioJQ(f, a, b, n)
+  % Calcula el valor de una integral usando el metodo del punto medio
+  % Input: f funcion a integrar
+  %        a,b limites de integracion
+  %        n cantidad de intervalos
+  
+  h = (b-a)/n;
+  resultado = 0;
+  
+  for i=0:n-1
+    x1 = a + i*h;
+    x2 = a + (i+1)*h;
+    pm = (x1 + x2)/2;
+    resultado = resultado + double(f(pm));
+  end
+  
+  resultado = resultado * h;  
+end
+
+% Programa 3: metodo trapecio
+function resultado = trapecioJQ(f, a, b, n)
+  % Calcula el valor de una integral usando el metodo del trapecio
+  % Input: f funcion a integrar
+  %        a,b limites de integracion
+  %        n cantidad de intervalos
+  
+  h = (b-a)/n;
+  sumatoria = 0;
+  
+  for i=1:n-1
+    x1 = a + i*h;
+    sumatoria = sumatoria + double(f(x1));
+  end
+  
+  resultado = h*(0.5*(double(f(a))+double(f(b)))+sumatoria);
+end
+
+% Defino la funcion 1
+f(x) = 2*x*sin(x^2)
+ 
+f(x) =
+ 
+2*x*sin(x^2)
+ 
+% Defino numero de intervalos
+n = 10
+
+n =
+
+    10
+
+% Defino limites de integracion
+a = 0;
+b = 5;
+% Calculo integral con sumas de riemann
+resultados = sumasRiemmanJQ(f,a,b,n)
+
+resultados =
+
+    3.9664    3.3047
+
+% Ahora uso 100 intervalos
+format long
+n = 100;
+resultados = sumasRiemmanJQ(f,a,b,n)
+
+resultados =
+
+   0.062565186976777  -0.003610688072110
+
+% Ahora uso 1000 intervalos
+n = 1000;
+resultados = sumasRiemmanJQ(f,a,b,n)
+
+resultados =
+
+   0.012311939476045   0.005694351971157
+
+% Ahora hago los calculos con el metodo de punto medio
+% Con 10 intervalos
+n = 10;
+resultado = puntoMedioJQ(f,a,b,n)
+
+resultado =
+
+  -2.464927602511185
+
+% Con 100 intervalos
+n = 100;
+resultado = puntoMedioJQ(f,a,b,n)
+
+resultado =
+
+  -0.001574819052981
+
+% Con 1000 intervalos
+n = 1000;
+resultado = puntoMedioJQ(f,a,b,n)
+
+resultado =
+
+   0.008694206167856
+
+% Ahora uso el metodo del trapecio
+% Con 10 intervalos
+n = 10;
+resultado = trapecioJQ(f,a,b,n)
+
+resultado =
+
+   3.635537801211961
+
+% Con 100 intervalos
+n = 100;
+resultado = trapecioJQ(f,a,b,n)
+
+resultado =
+
+   0.029477249452333
+
+% Con 1000 intervalos
+n = 1000;
+resultado = trapecioJQ(f,a,b,n)
+
+resultado =
+
+   0.009003145723601
+
+% Ahora defino la siguiente funcion
+f(x) = sin(x)
+ 
+f(x) =
+ 
+sin(x)
+ 
+% Defino nuevos limites de integracion
+a = 0;
+b = 2;
+% Calculo integral con sumas de riemann
+% Con 10 intervalos
+n = 10;
+resultados = sumasRiemmanJQ(f,a,b,n)
+
+resultados =
+
+   1.320493454416311   1.502352939781447
+
+% Con 100 intervalos
+n = 100;
+resultados = sumasRiemmanJQ(f,a,b,n)
+
+resultados =
+
+   1.407006657069632   1.425192605606146
+
+% Con 100 intervalos
+% Con 1000 intervalos
+n = 1000;
+resultados = sumasRiemmanJQ(f,a,b,n)
+
+resultados =
+
+   1.415237067071341   1.417055661924992
+
+% Calculo integral con metodo de punto medio
+% Con 10 intervalos
+n = 10;
+resultado = puntoMedioJQ(f,a,b,n)
+
+resultado =
+
+   1.418509837800022
+
+% Con 100 intervalos
+n = 100;
+resultado = puntoMedioJQ(f,a,b,n)
+
+resultado =
+
+   1.416170439269783
+
+% Con 1000 intervalos
+n = 1000;
+resultado = puntoMedioJQ(f,a,b,n)
+
+resultado =
+
+   1.416147072571641
+
+% Ahora calculo integrales con metodo del trapecio
+% Con 10 intervalos
+n = 10;
+resultado = trapecioJQ(f,a,b,n)
+
+resultado =
+
+   1.411423197098879
+
+% Con 100 intervalos
+n = 100;
+resultado = trapecioJQ(f,a,b,n)
+
+resultado =
+
+   1.416099631337889
+
+% Con 1000 intervalos
+n = 1000;
+resultado = trapecioJQ(f,a,b,n)
+
+resultado =
+
+   1.416146364498166
+
+% Calculo analitico de las integrales
+% integral desde 0 a 2 de sin(x) = -cos(2) + 1 --> aprox 1.41614
+% integral desde 0 a 5 de 2x*sin(x^2) = -cos(4) + 1 --> aprox 0.00879
+
+
+% Comparacion de resultados
+% En la funcion sin(x) se obtuvo mayor precisión que en la funcion 2x*sin(x^2)
+% Esto es debido a que la segunda funcion tiene una mayor oscilacion que la primera, y eso genera que los rectangulos de la suma de Riemann no aproximen del todo bien
+
+
+% Grafica  de las funciones
+x = linspace(0,5,1000);
+y1 = sin(x);
+y2 = 2*x.*sin(x.^2);
+plot(x,y1,x,y2)
+diary off

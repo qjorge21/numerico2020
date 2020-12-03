@@ -1,0 +1,550 @@
+>> % Ejercicio 1.1: Realizar la siguiente operacion: 2.7^2.1 + log10 108.2.
+>> 2.7^2.1 + log10(108.2)
+ans =  10.085
+>> % Ejercicio 1.3: Realizar la siguiente operacion: 2.7^2.1+log10 108.2 y asignarla a la variable x.
+>> x = 2.7^2.1 + log10(108.2)
+x =  10.085
+>> % Ejercicio 1.5 Repetir la operacion anterior hasta que se estabilice el cuarto decimal de x de un paso al siguiente.
+>> format long
+>> x = 0.2
+x =    2.000000000000000e-01
+>> x = cos(x)
+x =    9.800665778412416e-01
+>> x = cos(x)
+x =    5.569672528096424e-01
+>> x = cos(x)
+x =    8.488621656582708e-01
+>> x = cos(x)
+x =    6.608375511166150e-01
+>> x = cos(x)
+x =    7.894784377668683e-01
+>> x = cos(x)
+x =    7.042157133419932e-01
+>> x = cos(x)
+x =    7.621195617606609e-01
+>> x = cos(x)
+x =    7.233741721055711e-01
+>> x = cos(x)
+x =    7.495765763314931e-01
+>> x = cos(x)
+x =    7.319774252581913e-01
+>> x = cos(x)
+x =    7.438542614501144e-01
+>> x = cos(x)
+x =    7.358641981692920e-01
+>> x = cos(x)
+x =    7.412509562683525e-01
+>> x = cos(x)
+x =    7.376244764483199e-01
+>> x = cos(x)
+x =    7.400682604082975e-01
+>> x = cos(x)
+x =    7.384225298410249e-01
+>> x = cos(x)
+x =    7.395313085407390e-01
+>> x = cos(x)
+x =    7.387845105929659e-01
+>> x = cos(x)
+x =    7.392876028296402e-01
+>> x = cos(x)
+x =    7.389487320992274e-01
+>> x = cos(x)
+x =    7.391770077719252e-01
+>> x = cos(x)
+x =    7.390232422893508e-01
+>> x = cos(x)
+x =    7.391268222717290e-01
+>> x = cos(x)
+x =    7.390570503229223e-01
+>> x = cos(x)
+x =    7.391040498977448e-01
+>> x = cos(x)
+x =    7.390723905779830e-01
+>> x = cos(x)
+x =    7.390937167488424e-01
+>> x = cos(x)
+x =    7.390793512163930e-01
+>> % Ejercicio 1.6: Cambiar el formato para que otra vez se vean solo cuatro decimales.
+>> format short
+>> x
+x =  0.73908
+>> % Ejercico 1.7: Empezando por x = 100 repetir la operaci´on x = x−(x2 −81)/2/x hasta que se converja en el cuarto decimal. ¿Que relacion hay entre el ultimo x y 81? TODO
+>> x=100
+x =  100
+>> x=x-(x^2 - 81)/2/x
+x =  50.405
+>> x=x-(x^2 - 81)/2/x
+x =  26.006
+>> x=x-(x^2 - 81)/2/x
+x =  14.560
+>> x=x-(x^2 - 81)/2/x
+x =  10.062
+>> x=x-(x^2 - 81)/2/x
+x =  9.0560
+>> x=x-(x^2 - 81)/2/x
+x =  9.0002
+>> x=x-(x^2 - 81)/2/x
+x =  9.0000
+>> x=x-(x^2 - 81)/2/x
+x =  9
+>> x=x-(x^2 - 81)/2/x
+x =  9
+>> % La relacion con el 81 con x es que converge a medida que x se acerca a 9 que es la raiz cuadrada de 81
+>> % Ejercicio 2.1: Calcular la suma de los elementos de v, elemento a elemento.
+>> v = [0:2:8]
+v =
+
+   0   2   4   6   8
+
+>> v(1)+v(2)+v(3)+v(4)+v(5)
+ans =  20
+>> % Ejercicio 2.2: Definir un nuevo vector que sea el traspuesto de v y aplicar a ese vector el comando size. ¿Es coherente el resultado?
+>> size(v)
+ans =
+
+   1   5
+
+>> vT = v'
+vT =
+
+   0
+   2
+   4
+   6
+   8
+
+>> size(vT)
+ans =
+
+   5   1
+
+>> % Si es coherente
+>> % Ejercicio 3.1: Sumar los elementos diagonales de la matriz A, refiriendonos a ellos, elemento a elemento.
+>> A = [1 2 3; 3 4 5; 6 7 8]
+A =
+
+   1   2   3
+   3   4   5
+   6   7   8
+
+>> A(1,1) +  A(2,2) +  A(3,3)
+ans =  13
+>> % Ejercicio 3.2: Definir la matriz D = 2B − A.
+>> B = [[1 2 3]' [2 4 7]' [3 5 8]']
+B =
+
+   1   2   3
+   2   4   5
+   3   7   8
+
+>> % defino la matriz D
+>> D = 2*B - A
+D =
+
+   1   2   3
+   1   4   5
+   0   7   8
+
+>> % Ejercicio 3.3: Definir la matriz D = B − A · B.
+>> D = B - A*B
+D =
+
+   -13   -29   -34
+   -24   -53   -64
+   -41   -89  -109
+
+>> % Ejercicio 3.4: Definir la matriz C = AAt.
+>> C = A*A'
+C =
+
+    14    26    44
+    26    50    86
+    44    86   149
+
+>> % Ejercicio 3.5: Definir la matriz D = B − A · B como D = B(I − A).
+>> %defino matriz de ceros
+>> I = zeros(3)
+I =
+
+   0   0   0
+   0   0   0
+   0   0   0
+
+>> % la convierto a matriz identidad
+>> I(1,1)=1
+I =
+
+   1   0   0
+   0   0   0
+   0   0   0
+
+>> I(2,2)=1
+I =
+
+   1   0   0
+   0   1   0
+   0   0   0
+
+>> I(3,3)=1
+I =
+
+   1   0   0
+   0   1   0
+   0   0   1
+
+>> % defino matriz D = B(I-A)
+>> D = B * (I-A)
+D =
+
+   -24   -29   -34
+   -42   -51   -61
+   -69   -83  -100
+
+>> % Ejercicio 3.6: Definir una matriz D diagonal cuyos elementos sean −2, 1, 0.2 y −0.7.
+>> J = diag([-2 1 0.2 -0.7])
+J =
+
+Diagonal Matrix
+
+  -2.00000         0         0         0
+         0   1.00000         0         0
+         0         0   0.20000         0
+         0         0         0  -0.70000
+>> % Ejercicio 3.7: Pedir ayuda de la funci´on eye, y definir la matriz diagonal de 10x10.
+>> help eye
+'eye' is a built-in function from the file libinterp/corefcn/data.cc
+
+ -- eye (N)
+ -- eye (M, N)
+ -- eye ([M N])
+ -- eye (..., CLASS)
+     Return an identity matrix.
+
+     If invoked with a single scalar argument N, return a square NxN
+     identity matrix.
+
+     If supplied two scalar arguments (M, N), 'eye' takes them to be the
+     number of rows and columns.  If given a vector with two elements,
+     'eye' uses the values of the elements as the number of rows and
+     columns, respectively.  For example:
+
+          eye (3)
+           =>  1  0  0
+               0  1  0
+               0  0  1
+
+     The following expressions all produce the same result:
+
+          eye (2)
+          ==
+          eye (2, 2)
+          ==
+          eye (size ([1, 2; 3, 4]))
+
+     The optional argument CLASS, allows 'eye' to return an array of the
+     specified type, like
+
+          val = zeros (n,m, "uint8")
+
+     Calling 'eye' with no arguments is equivalent to calling it with an
+     argument of 1.  Any negative dimensions are treated as zero.  These
+     odd definitions are for compatibility with MATLAB.
+
+     See also: speye, ones, zeros.
+
+Additional help for built-in functions and operators is
+available in the online version of the manual.  Use the command
+'doc <topic>' to search the manual index.
+
+Help and information about Octave is also available on the WWW
+at https://www.octave.org and via the help@octave.org
+mailing list.
+>> % Calculo matriz diagonal 10x10 con eye
+>> eye(10)
+ans =
+
+Diagonal Matrix
+
+   1   0   0   0   0   0   0   0   0   0
+   0   1   0   0   0   0   0   0   0   0
+   0   0   1   0   0   0   0   0   0   0
+   0   0   0   1   0   0   0   0   0   0
+   0   0   0   0   1   0   0   0   0   0
+   0   0   0   0   0   1   0   0   0   0
+   0   0   0   0   0   0   1   0   0   0
+   0   0   0   0   0   0   0   1   0   0
+   0   0   0   0   0   0   0   0   1   0
+   0   0   0   0   0   0   0   0   0   1
+
+>> % Ejercicio 3.8: Utilizando el comando size, razona sobre los problemas en lo que se refiere a dimensiones en la multiplicaci´on anterior.
+>> % defino v
+>> v = [0:2:8]
+v =
+
+   0   2   4   6   8
+
+>> A * v(1:3)
+error: operator *: nonconformant arguments (op1 is 3x3, op2 is 1x3)
+>> A * V(1:3)'
+error: 'V' undefined near line 1 column 5
+>> A * v(1:3)'
+ans =
+
+   16
+   28
+   46
+
+>> size(A)
+ans =
+
+   3   3
+
+>> size(v)
+ans =
+
+   1   5
+
+>> size(v(1:3))
+ans =
+
+   1   3
+
+>> size(v(1:3)')
+ans =
+
+   3   1
+
+>> % El error se da porque las dimensiones de las matrices a multiplicar no coinciden. Al hacer la traspuesta del slice de v, las dimensiones si coinciden y se puede hacer la multiplicacion
+>> % Ejercicio 3.9: Definir una matriz de nombre B1 como la inversa de B. Multiplicar B por B1 y razonar la coherencia del resultado.
+>> B1 = inv(B)
+B1 =
+
+  -3.00000   5.00000  -2.00000
+  -1.00000  -1.00000   1.00000
+   2.00000  -1.00000   0.00000
+
+>> B * B1
+ans =
+
+   1.00000   0.00000   0.00000
+   0.00000   1.00000   0.00000
+   0.00000  -0.00000   1.00000
+
+>> % Es coherente ya que al multiplicar una matriz por su inversa, se obtiene la matriz identidad
+>> diary off
+>> A
+error: 'A' undefined near line 1 column 1
+>> A = [1 2 3; 3 4 5; 6 7 8]
+A =
+
+   1   2   3
+   3   4   5
+   6   7   8
+
+>> eig(A)
+ans =
+
+   1.4066e+01
+  -1.0664e+00
+   3.4393e-17
+
+>> format short
+>> eig(A)
+ans =
+
+   1.4066e+01
+  -1.0664e+00
+   3.4393e-17
+
+>> [V,e] = eig(A)
+V =
+
+   0.26565   0.74443   0.40825
+   0.49121   0.19070  -0.81650
+   0.82955  -0.63989   0.40825
+
+e =
+
+Diagonal Matrix
+
+   1.4066e+01            0            0
+            0  -1.0664e+00            0
+            0            0   3.4393e-17
+
+>> % Ejercicio 4.1: Definir un vector w como la primera columna de la matriz V
+>> w = V(:,1)
+w =
+
+   0.26565
+   0.49121
+   0.82955
+
+>> % Ejercicio 4.2: Calcular el producto Aw
+>> A*w
+ans =
+
+    3.7367
+    6.9095
+   11.6687
+
+>> % Ejercicio 4.3: Calcular el producto 14.0664w. ¿Son parecidos? ¿Por que sı o por que no?
+>> 14.0664*w
+ans =
+
+    3.7367
+    6.9095
+   11.6687
+
+>> % Son parecidos porque 14.0664w y w porque u = 14.0664 es un autovalor de A. Por propiedad de autovalores se cumple que Aw = uw 
+>> % Ejercicio 5.1: Definir una matriz B2 = BBt.
+>> % Defino B
+>> B = [[1 2 3]' [2 4 7]' [3 5 8]'];
+>> % Defino B2
+>> B2 = B*B'
+B2 =
+
+    14    25    41
+    25    45    74
+    41    74   122
+
+>> % Ejercicio 5.2: Calcular los autovalores de B2. ¿Que tienen de especial estos autovalores?
+>> eig(B2)
+ans =
+
+     0.024006
+     0.230464
+   180.745529
+
+>> % Los autovalores de B y Bt son iguales. Por lo tanto los autovalores de B2 son iguales a los de 2B
+>> % Ejercicio 5.3: Encontrar la solucion del sistema lineal BBtx = v asignando esa solucion al vector x.
+>> % Uso B2 que ya esta definido como B*Bt y resuelvo el sistema:
+>> x = B2/v
+error: 'v' undefined near line 5 column 8
+>> v = [0:2:8]
+v =
+
+   0   2   4   6   8
+
+>> x = B2/v
+error: operator /: nonconformant arguments (op1 is 3x3, op2 is 1x5)
+>> x = B2\v
+error: operator \: nonconformant arguments (op1 is 3x3, op2 is 1x5)
+>> v = [1 2 5]'
+v =
+
+   1
+   2
+   5
+
+>> x = B2\v
+x =
+
+    7.0000
+  -17.0000
+    8.0000
+
+>> % Ejercicio 5.4: Comprobar la solucion obtenida realizando el calculo BBtx − v.
+>> B*B'*x-v
+ans =
+
+  -5.6843e-14
+  -1.1369e-13
+   0.0000e+00
+
+>> B2*x
+ans =
+
+   1.00000
+   2.00000
+   5.00000
+
+>> ans - v
+ans =
+
+  -5.6843e-14
+  -1.1369e-13
+   0.0000e+00
+
+>> % No entendi porque al hacer la resta me da valores muy aproximados a cero pero no cero
+
+>> % Ejercicio 5.5: Definir una matriz H de 3x3 a partir de las tres primeras columnas de la matriz BA.
+>> H = BA(1:3,1:3)
+H =
+
+   1   2   3
+   0   1  -1
+   0   0  -1
+
+>> % Ejercicio 5.6: Definir un vector h utilizando la ultima columna de BA
+>> h = BA(:,4)
+h =
+
+   1
+   2
+   1
+
+>> % Ejercicio 5.7: Definir el vector z tal que Hz = h. ¿Es coherente el resultado?
+>> z = h/H
+z =
+
+   1.6667e-01   6.6667e-01  -1.8130e-16
+
+>> % Ejercicio 5.8: Pedir ayuda de la funcion det.
+>> help det
+'det' is a built-in function from the file libinterp/corefcn/det.cc
+
+ -- det (A)
+ -- [D, RCOND] = det (A)
+     Compute the determinant of A.
+
+     Return an estimate of the reciprocal condition number if requested.
+
+     Programming Notes: Routines from LAPACK are used for full matrices
+     and code from UMFPACK is used for sparse matrices.
+
+     The determinant should not be used to check a matrix for
+     singularity.  For that, use any of the condition number functions:
+     'cond', 'condest', 'rcond'.
+
+     See also: cond, condest, rcond.
+
+Additional help for built-in functions and operators is
+available in the online version of the manual.  Use the command
+'doc <topic>' to search the manual index.
+
+Help and information about Octave is also available on the WWW
+at https://www.octave.org and via the help@octave.org
+mailing list.
+>> % Ejercicio 5.9: Calcular el determinante de la matriz H.
+>> det(H)
+ans = -1
+>> % Ejercicio 6.1: Borrar la memoria porque vamos a empezar con cosas nuevas reutilizando nombres de variables que ya hemos usado.
+>> clearvars
+
+>> % Ejercicio 6.2: Definir un vector tal que sus componentes sean las de v al cubo.
+>> x = v.* v .* v
+x =
+
+    1
+    8
+   27
+
+>> x = [0:0.1:100];
+>> y = sin(x) .* x ./ (1 + cos(x));
+>> plot(x,y)
+>> % Ejercicio 6.3: Definir un vector t cuya primera componente sea la -4, que tenga un incremento entre componentes de 0.05 y termine en el punto 1.
+>> t = [-4:0.05:1];
+>> % Ejercicio 6.4: Ejercicio 6.4 Definir un vector y a partir de cada componente del vector t recien definido como:
+>> y = 5 .* exp(-1 .* (t .* t)) + sin(10 .* t);
+>> % Ejercicio 6.5: Dibujar la curva t, y.
+>> plot(t,y)
+>> diary off
+>> % Ejercicio 7.1
+>>h=0.1;
+>>xmin=-2;
+>>xmax=2;
+>>x=xmin:h:xmax;
+>>yseno=sin(x);
+>>ytaylor=x-x.^3/6;
+>>plot(x,yseno,’go’,x,ytaylor);
+>> % Grafica en el documento
