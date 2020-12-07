@@ -1,0 +1,168 @@
+% PROGRAMA 1
+function tabla_romberg = rombergJQ(f, a, b, N)
+    % Calcula la tabla con aproximaciones de Romber de una integral
+    % Input: f funcion a integrar
+    %        a,b limites de integracion
+    %        n tamaño tabla romberg
+    % Output: tabla con aproximaciones de n x n
+    
+    % esto es dado que los arreglos o vectores en matlab arrancan en 1 y el
+    % algoritmo de romber arranca desde 0
+    N = N + 1;
+
+    tabla_romberg = zeros(N);
+    
+    % elemento 0,0
+    tabla_romberg(1,1) = ((double(f(a))+double(f(b)))/2)*(b-a);
+    
+    % elementos primer columna 
+    for i = 2:N
+        h = (b-a)/2^(i-1);
+        sum = 0;
+        
+        for k=1:2^(i-2)
+            sum = sum + double(f(a+(2*k-1)*h));
+        end
+        tabla_romberg(i,1) = (tabla_romberg(i-1,1)/2) + sum*h;
+    end
+    
+    % columnas restantes
+    for j=2:N
+        for i=j:N
+            tabla_romberg(i,j) = tabla_romberg(i,j-1) + (tabla_romberg(i,j-1)-tabla_romberg(i-1,j-1))/(4^(j-1)-1);
+        end
+    end
+end
+
+% PROGRAMA 2
+
+function aproximacion = simpsonJQ(f, a, b, N)
+    % Calcula la aproximacion de una integral mediante el metodo de Simpson
+    % Input: f funcion a integrar
+    %        a,b limites de integracion
+    %        n cantidad de particiones
+    % Output: valor que aproxima la integral
+    
+    h = (b-a)/N;
+    
+    % Calculo suma 1
+    sum1 = 0;
+    
+    for i = 1:(N/2)
+        sum1 = sum1 + double(f(a + (2*i - 1)*h));
+    end
+
+    
+    % Calculo suma 1
+    sum2 = 0;
+    
+    for i = 1:((N/2)-1)
+        sum2 = sum2 + double(f(a + 2*i*h));
+    end
+    
+    aproximacion = (h/3) * (double(f(a)) + double(f(b)) + 4*sum1 + 2*sum2);
+end
+
+
+format long
+% Primera funcion
+f(x) = 2*x*sin(x^2)
+ 
+f(x) =
+ 
+2*x*sin(x^2)
+ 
+a = 0;
+b = 5;
+% Metodo de Romberg
+tabla = rombergJQ(f,a,b,10)
+
+tabla =
+
+  Columns 1 through 6
+
+  -3.308793752444326                   0                   0                   0                   0                   0
+  -2.069137083066623  -1.655918193274055                   0                   0                   0                   0
+  11.439202527511831  15.941982397704649  17.115175770436561                   0                   0                   0
+   5.424334424373854   3.419378389994529   2.584538122813854   2.353893080788097                   0                   0
+   0.978686211145020  -0.503196526597925  -0.764701521037422  -0.817864055066807  -0.830302318344669                   0
+   0.218468538188555  -0.034937352796933  -0.003720074543533   0.008358996035735   0.011599086432215   0.012422059457413
+   0.059589489871035   0.006629807098528   0.009400951091558   0.009609221339734   0.009614124184064   0.009612183849510
+   0.021398974791121   0.008668803097817   0.008804736164436   0.008795272435434   0.008792080478947   0.008791276917163
+   0.011941695275500   0.008789268770293   0.008797299815124   0.008797181777834   0.008797189265451   0.008797194259377
+   0.009582944911491   0.008796694790155   0.008797189858146   0.008797188112797   0.008797188137640   0.008797188136538
+   0.008993604223508   0.008797157327514   0.008797188163337   0.008797188136436   0.008797188136528   0.008797188136527
+
+  Columns 7 through 11
+
+                   0                   0                   0                   0                   0
+                   0                   0                   0                   0                   0
+                   0                   0                   0                   0                   0
+                   0                   0                   0                   0                   0
+                   0                   0                   0                   0                   0
+                   0                   0                   0                   0                   0
+   0.009611497677201                   0                   0                   0                   0
+   0.008791076451489   0.008791026373895                   0                   0                   0
+   0.008797195704394   0.008797196077906   0.008797196172050                   0                   0
+   0.008797188135043   0.008797188134581   0.008797188134459   0.008797188134429                   0
+   0.008797188136527   0.008797188136527   0.008797188136527   0.008797188136527   0.008797188136527
+
+% Metodo de simpson
+aprox = simpsonJQ(f,a,b,1000)
+
+aprox =
+
+   0.008797154261211
+
+% Segunda funcion
+f(x) = sin(x)
+ 
+f(x) =
+ 
+sin(x)
+ 
+a = 0;
+b = 2;
+% Metodo de Romberg
+tabla = rombergJQ(f,a,b,10)
+
+tabla =
+
+  Columns 1 through 6
+
+   0.909297426825682                   0                   0                   0                   0                   0
+   1.296119698220737   1.425060455352422                   0                   0                   0                   0
+   1.386520111714497   1.416653582879084   1.416093124714195                   0                   0                   0
+   1.408763377234094   1.416177799073959   1.416146080153618   1.416146920716148                   0                   0
+   1.414302414981989   1.416148760897955   1.416146825019554   1.416146836842823   1.416146836513908                   0
+   1.415685821233932   1.416146956651246   1.416146836368132   1.416146836548268   1.416146836547113   1.416146836547145
+   1.416031588346756   1.416146844051031   1.416146836544350   1.416146836547147   1.416146836547142   1.416146836547142
+   1.416118024848760   1.416146837016095   1.416146836547099   1.416146836547143   1.416146836547143   1.416146836547143
+   1.416139633644528   1.416146836576451   1.416146836547141   1.416146836547142   1.416146836547142   1.416146836547142
+   1.416145035822862   1.416146836548974   1.416146836547142   1.416146836547142   1.416146836547142   1.416146836547142
+   1.416146386366158   1.416146836547257   1.416146836547142   1.416146836547142   1.416146836547142   1.416146836547142
+
+  Columns 7 through 11
+
+                   0                   0                   0                   0                   0
+                   0                   0                   0                   0                   0
+                   0                   0                   0                   0                   0
+                   0                   0                   0                   0                   0
+                   0                   0                   0                   0                   0
+                   0                   0                   0                   0                   0
+   1.416146836547142                   0                   0                   0                   0
+   1.416146836547143   1.416146836547143                   0                   0                   0
+   1.416146836547142   1.416146836547142   1.416146836547142                   0                   0
+   1.416146836547142   1.416146836547142   1.416146836547142   1.416146836547142                   0
+   1.416146836547142   1.416146836547142   1.416146836547142   1.416146836547142   1.416146836547142
+
+% Metodo de simpson
+aprox = simpsonJQ(f,a,b,1000)
+
+aprox =
+
+   1.416146836547269
+
+% Ambos metodos aproximan bien y mejor que los metodos del practico anterior (trapecio, punto medio, riemann)
+% Esto es porque en la formula del error del método de simpson, h se encuentra elevado a la cuarta. Eso quiere decir que si por ejemplo h = 1/10, el error en el calculo la formula va a ser (1/10)^4 = 1/10000. Esto es mejor que el error que proporciona el método del trapecio
+diary off
